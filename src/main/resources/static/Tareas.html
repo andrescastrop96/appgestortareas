@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestión de Tareas</title>
+    <style>
+        body { font-family: Arial; padding: 20px; }
+        .completada { text-decoration: line-through; color: gray; }
+        li { margin: 8px 0; }
+    </style>
+</head>
+<body>
+    <h1>Lista de Tareas</h1>
+
+    <ul id="lista-tareas"></ul>
+
+    <h2>Agregar nueva tarea</h2>
+    <input type="text" id="texto-tarea" placeholder="Escribe una tarea..." />
+    <button onclick="agregarTarea()">Agregar</button>
+
+    <script>
+        const API_URL = "http://localhost:8080/api/tareas";
+
+        // Obtener todas las tareas
+        function cargarTareas() {
+            fetch(API_URL)
+                .then(res => res.json())
+                .then(tareas => {
+                    const lista = document.getElementById("lista-tareas");
+                    lista.innerHTML = "";
+
+                    tareas.forEach(tarea => {
+                        const item = document.createElement("li");
+                        item.innerHTML = `
+                            <span class="${tarea.completada ? 'completada' : ''}">
+                                ${tarea.texto}
+                            </span>
+                            <button onclick="marcarCompletada(${tarea.id}, ${!tarea.completada})">
+                                ${tarea.completada ? '❌ Desmarcar' : '✅ Completar'}
+                            </button>
+                            <button onclick="eliminarTarea(${tarea.id})">🗑 Eliminar</button>
+                        `;
+                        lista.appendChild(item);
+                    });
+                });
+        }
+
+        // Agregar tarea
+        function agregarTarea() {
+            const texto = document.getElementById("texto-tarea").value.trim();
+            if (!texto) return alert("Escribe una tarea.");
+
+            fetch(API_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ texto: texto, completada: false })
+            })
+            .then(() => {
+                document.getElementById("texto-tarea").value = "";
+                cargarTareas();
+            });
+        }
+
+        // Marcar como completada o no
+        function marcarCompletada(id, completada) {
+            fetch(`${API_URL}/${id}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ texto: "", completada: completada })
+            }).then(() => cargarTareas());
+        }
+
+        // Eliminar tarea
+        function eliminarTarea(id) {
+            fetch(`${API_URL}/${id}`, {
+                method: "DELETE"
+            }).then(() => cargarTareas());
+        }
+
+        // Cargar al inicio
+        cargarTareas();
+    </script>
+</body>
+</html>
+******

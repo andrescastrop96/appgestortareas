@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Convertidor Binario</title>
+</head>
+<body>
+    <h1>Convertidor de Texto a Binario</h1>
+
+    <form action="/convertir" method="post">
+        <label for="texto">Texto:</label>
+        <input type="text" id="texto" name="texto" required>
+        <button type="submit">Convertir</button>
+    </form>
+
+    <div>
+        <p><strong>Texto original:</strong> <span th:text="${textoOriginal}"></span></p>
+        <p><strong>Texto en binario:</strong> <span th:text="${textoBinario}"></span></p>
+    </div>
+</body>
+</html>

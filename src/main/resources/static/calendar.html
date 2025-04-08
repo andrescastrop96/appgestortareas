@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestión de Calendario</title>
+    <style>
+        body { font-family: Arial; padding: 20px; background: #f4f4f4; }
+        h1 { color: #333; }
+        form, ul { background: white; padding: 20px; border-radius: 10px; }
+        input, button { margin: 10px 0; padding: 10px; }
+    </style>
+</head>
+<body>
+    <h1>📆 Calendario de Eventos</h1>
+
+    <form id="eventoForm">
+        <label>Título del evento:</label><br>
+        <input type="text" id="titulo" required><br>
+        <label>Fecha:</label><br>
+        <input type="date" id="fecha" required><br>
+        <button type="submit">Agregar evento</button>
+    </form>
+
+    <h2>Eventos actuales:</h2>
+    <ul id="listaEventos"></ul>
+
+    <script>
+        async function cargarEventos() {
+            const res = await fetch('/api/calendario/eventos');
+            const eventos = await res.json();
+            const lista = document.getElementById('listaEventos');
+            lista.innerHTML = '';
+            eventos.forEach(ev => {
+                const li = document.createElement('li');
+                li.textContent = `${ev.fecha} - ${ev.titulo}`;
+                lista.appendChild(li);
+            });
+        }
+
+        document.getElementById('eventoForm').addEventListener('
